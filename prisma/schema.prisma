@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  products Product[]
+
+}
+
+model Product {
+  id         Int      @id @default(autoincrement())
+  name       String
+  price      Decimal  @db.Decimal(10, 2)
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+   inventory          Inventory?
+  createdAt  DateTime @default(now()) @map("created_at")
+  upadtedAt  DateTime @updatedAt @map("updated_at")
+  sales      Sale[]
+
+}
+
+model Sale {
+  id         Int      @id @default(autoincrement())
+  productId  Int      @map("product_id")
+  quantity   Int
+  totalPrice Decimal  @map("total_price") @db.Decimal(10, 2)
+  saleDate   DateTime @map("sale_date") @db.Date
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  product    Product  @relation(fields: [productId], references: [id])
+}
+
+model Inventory {
+  id                 Int        @id @default(autoincrement())
+  productId          Int        @unique
+  product            Product    @relation(fields: [productId], references: [id])
+  quantity           Int
+  location           String
+  lowStockThreshold  Int
+  createdAt          DateTime   @default(now()) @map("created_at")
+  updatedAt          DateTime   @updatedAt  @map("updated_at")
+  logs               InventoryLog[]
+}
+
+model InventoryLog {
+  id                 Int        @id @default(autoincrement())
+  inventoryId        Int
+  inventory          Inventory  @relation(fields: [inventoryId], references: [id])
+  changeType         String     // e.g., "addition", "subtraction", "update"
+  quantityChanged    Int
+  timestamp          DateTime   @default(now())
+  userId             Int?       // Optional: track who made the change
+}
