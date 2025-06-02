@@ -121,7 +121,7 @@ All endpoints are prefixed with `/api`.
 ### Inventory API (`/api/inventory`)
 
 *   **`GET /status`**: Retrieves the current status of all inventory items. This includes product name, current quantity, low stock threshold, a flag if stock is low, and location.
-*   **`POST /update`**: Updates the quantity of a specific inventory item and logs the change.
+*   **`PATCH /update`**: Updates the quantity of a specific inventory item and logs the change.
     *   **Request Body** (JSON):
         *   `productId` (integer, required): The ID of the product whose inventory is being updated.
         *   `quantityChange` (integer, required): The amount by which to change the quantity (positive for adding stock, negative for reducing).
