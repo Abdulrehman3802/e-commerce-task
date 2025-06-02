@@ -1,5 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../prisma/client'); 
 const seedInventory = require('./seeders/inventory')(prisma);
 const seedCategory = require('./seeders/category')(prisma);
 const seedProduct = require('./seeders/product')(prisma);

@@ -1,5 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../prisma/client'); 
+
 
 async function seedInventory() {
   const protienPowder = await prisma.product.findFirst({ where: { name: 'Protein Powder' } });

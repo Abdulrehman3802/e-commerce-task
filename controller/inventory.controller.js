@@ -1,6 +1,6 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-const apiResponse  = require('../utils/apiResponse');`-pkyt`
+const prisma = require('../prisma/client');
+const apiResponse  = require('../utils/apiResponse');
+const { status } = require("http-status");
 exports.getInventoryStatus = async (req, res) => {
   try {
     const inventoryItems = await prisma.inventory.findMany({
@@ -21,14 +21,14 @@ exports.getInventoryStatus = async (req, res) => {
       res,
       inventoryStatus,
       'Inventory status retrieved successfully',
-      200,
+      status.OK,
     );
   } catch (error) {
     console.error('Error retrieving inventory status:', error);
     return apiResponse.error(
       res,
       'Failed to retrieve inventory status',
-      500,
+      status.INTERNAL_SERVER_ERROR
     );
   }
 };
@@ -45,7 +45,7 @@ exports.updateInventory = async (req, res) => {
       return apiResponse.error(
         res,
         'Inventory record not found',
-        404,
+        status.NOT_FOUND,
       );
     }
 
@@ -55,7 +55,7 @@ exports.updateInventory = async (req, res) => {
       return apiResponse.error(
         res,
         'Insufficient inventory quantity',
-        400,
+        status.BAD_REQUEST,
       );
     }
 
@@ -76,14 +76,14 @@ exports.updateInventory = async (req, res) => {
       res,
       updatedInventory,
       'Inventory updated successfully',
-      200,
+      status.OK,
     );
   } catch (error) {
     console.error('Error updating inventory:', error);
     return apiResponse.error(
       res,
       'Failed to update inventory',
-      500,
+      status.INTERNAL_SERVER_ERROR,
     );
   }
 };
