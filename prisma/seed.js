@@ -1,15 +1,15 @@
 const prisma = require('../prisma/client'); 
-const seedInventory = require('./seeders/inventory')(prisma);
-const seedCategory = require('./seeders/category')(prisma);
-const seedProduct = require('./seeders/product')(prisma);
-const seedSale = require('./seeders/sale')(prisma);
-async function main() {
-    await seedCategory();
-    await seedProduct();
-    await seedInventory();
-    await seedSale();
-}
+const seedCategory = require('./seeders/category');
+const seedProduct = require('./seeders/product');
+const seedInventory = require('./seeders/inventory');
+const seedSale = require('./seeders/sale');
 
+async function main() {
+  await seedCategory(prisma);
+  await seedProduct(prisma);
+  await seedInventory(prisma);
+  await seedSale(prisma);
+}
 main()
     .catch((e) => {
         console.error(e);

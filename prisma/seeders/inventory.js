@@ -1,13 +1,9 @@
-const prisma = require('../prisma/client'); 
-
-
-async function seedInventory() {
-  const protienPowder = await prisma.product.findFirst({ where: { name: 'Protein Powder' } });
+module.exports = async (prisma) =>{
+  const proteinPowder = await prisma.product.findFirst({ where: { name: 'Protein Powder' } });
   const bluetoothSpeaker = await prisma.product.findFirst({ where: { name: 'Bluetooth Speaker' } });
-
   const inventories = [
     {
-      productId: protienPowder.id,
+      productId: proteinPowder.id,
       quantity: 50,
       location: 'Warehouse A',
       lowStockThreshold: 10,
@@ -25,4 +21,4 @@ async function seedInventory() {
   }
 }
 
-module.exports = seedInventory;
+
