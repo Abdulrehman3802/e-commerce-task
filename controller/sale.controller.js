@@ -1,5 +1,5 @@
 const prisma = require('../prisma/client');
-
+const apiResponse  = require('../utils/apiResponse');
 exports.getSales = async (req, res) => {
   try {
     const { startDate, endDate, productId, categoryId } = req.query;
@@ -26,11 +26,19 @@ exports.getSales = async (req, res) => {
         product: true,
       },
     });
-
-    res.status(200).json({ sales });
+    return apiResponse.success(
+      res,
+      sales,
+      'Sales retrieved successfully',
+      200,
+    );
   } catch (error) {
     console.error('Error retrieving sales:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return apiResponse.error(
+      res,
+      'Failed to retrieve sales',
+      500,
+    );
   }
 };
 
@@ -39,7 +47,7 @@ exports.getRevenueSummary = async (req, res) => {
     const { period, startDate, endDate } = req.query;
 
     if (!['daily', 'weekly', 'monthly', 'yearly'].includes(period)) {
-      return res.status(400).json({ error: 'Invalid period parameter' });
+        return apiResponse.error(res, 'Invalid period parameter', 400);
     }
 
     const sales = await prisma.sale.findMany({
@@ -87,11 +95,10 @@ exports.getRevenueSummary = async (req, res) => {
         totalRevenue,
       })
     );
-
-    res.status(200).json({ period, summary: formattedSummary });
+    return apiResponse.success(res,{ period, summary: formattedSummary }, 'Revenue summary retrieved successfully', 200);
   } catch (error) {
     console.error('Error retrieving revenue summary:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return apiResponse.error(res, 'Failed to retrieve revenue summary', 500);
   }
 };
 
@@ -111,9 +118,8 @@ exports.compareRevenue = async (req, res) => {
       !secondStartDate ||
       !secondEndDate
     ) {
-      return res
-        .status(400)
-        .json({ error: 'All date parameters are required' });
+        return apiResponse.error(
+      res,'All date parameters are required', 400);
     }
 
     const filters = (startDate, endDate) => ({
@@ -151,8 +157,7 @@ exports.compareRevenue = async (req, res) => {
     const difference = secondTotal - firstTotal;
     const percentageChange =
       firstTotal === 0 ? null : (difference / firstTotal) * 100;
-
-    res.status(200).json({
+const data = {
       comparison: {
         firstPeriod: {
           startDate: firstStartDate,
@@ -167,9 +172,11 @@ exports.compareRevenue = async (req, res) => {
         difference,
         percentageChange,
       },
-    });
+    }
+    return apiResponse.success(res, data, 'Revenue comparison successful', 200);
+
   } catch (error) {
     console.error('Error comparing revenue:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return apiResponse.error(res, 'Failed to compare revenue', 500);
   }
 };
