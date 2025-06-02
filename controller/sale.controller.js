@@ -46,11 +46,6 @@ exports.getSales = async (req, res) => {
 exports.getRevenueSummary = async (req, res) => {
   try {
     const { period, startDate, endDate } = req.query;
-
-    if (!['daily', 'weekly', 'monthly', 'yearly'].includes(period)) {
-        return apiResponse.error(res, 'Invalid period parameter', status.BAD_REQUEST);
-    }
-
     const sales = await prisma.sale.findMany({
       where: {
         saleDate: {
@@ -113,20 +108,10 @@ exports.compareRevenue = async (req, res) => {
       categoryId,
     } = req.query;
 
-    if (
-      !firstStartDate ||
-      !firstEndDate ||
-      !secondStartDate ||
-      !secondEndDate
-    ) {
-        return apiResponse.error(
-      res,'All date parameters are required', status.BAD_REQUEST);
-    }
-
-    const filters = (startDate, endDate) => ({
+    const filters = (firstStartDate, firstEndDate) => ({
       saleDate: {
-        gte: new Date(startDate),
-        lte: new Date(endDate),
+        gte: new Date(firstStartDate),
+        lte: new Date(firstEndDate),
       },
       ...(categoryId && {
         product: {

@@ -3,7 +3,18 @@ const apiResponse  = require('../utils/apiResponse');
 const { status } = require("http-status");
 exports.getInventoryStatus = async (req, res) => {
   try {
+    const { productId, categoryId } = req.query;
+    const dbQuery = {
+      ...(productId && { productId: parseInt(productId) }),
+      ...(categoryId && {
+        product: {
+          categoryId: parseInt(categoryId),
+        },
+      }),
+    };
+
     const inventoryItems = await prisma.inventory.findMany({
+      where: dbQuery,
       include: {
         product: true,
       },
@@ -17,11 +28,12 @@ exports.getInventoryStatus = async (req, res) => {
       isLowStock: item.quantity < item.lowStockThreshold,
       location: item.location,
     }));
+
     return apiResponse.success(
       res,
       inventoryStatus,
       'Inventory status retrieved successfully',
-      status.OK,
+      status.OK
     );
   } catch (error) {
     console.error('Error retrieving inventory status:', error);
@@ -34,7 +46,7 @@ exports.getInventoryStatus = async (req, res) => {
 };
 
 exports.updateInventory = async (req, res) => {
-  const { productId, quantityChange, changeType, userId } = req.body;
+  const { productId, quantityChange,  userId } = req.body;
 
   try {
     const inventory = await prisma.inventory.findUnique({
@@ -67,8 +79,8 @@ exports.updateInventory = async (req, res) => {
     await prisma.inventoryLog.create({
       data: {
         inventoryId: updatedInventory.id,
-        changeType,
         quantityChanged: quantityChange,
+        changeType:"Update",
         userId,
       },
     });

@@ -5,7 +5,7 @@ const validate = require('../middleware/validate');
 const { inventoryValidation } = require('../validation');
 
 router.get('/status', inventoryController.getInventoryStatus);
-router.post('/update', validate(inventoryValidation.updateInventory), inventoryController.updateInventory);
+router.patch('/update', validate(inventoryValidation.updateInventory), inventoryController.updateInventory);
 
 
 module.exports = router;
