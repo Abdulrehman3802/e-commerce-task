@@ -23,7 +23,7 @@ A minimal Node.js Dashboard Insights using Express.js, Prisma ORM, and Joi for b
     - `http-status` for HTTP status codes.
     - `dotenv` for environment variable management.
     - `cors` for enabling Cross-Origin Resource Sharing.
-- ✅ Pre-configured scripts for development, production, migrations, and testing.
+- ✅ Pre-configured scripts for development, production and migrations.
 
 ---
 
